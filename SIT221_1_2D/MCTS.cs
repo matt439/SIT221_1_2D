@@ -46,7 +46,6 @@ public class MonteCarloTreeSearch
         for (int i = 0; i < _maxIterations; i++)
         {
             Node node = rootNode;
-            //Connect4 simulationConnect4 = new Connect4(rootNode.Connect4);
 
             // Selection
             node = Selection(rootNode);
