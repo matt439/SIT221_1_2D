@@ -86,14 +86,13 @@ public class MonteCarloTreeSearch
     private void GenerateChildren(Node parent)
     {
         List<int> validMoves = new List<int>();
-        // copy the valid moves from the parent node
         for (int i = 0; i < parent.UntriedMoves.Count; i++)
         {
             validMoves.Add(parent.UntriedMoves[i]);
         }
         if (validMoves.Count < 1)
         {
-            return;
+            throw new Exception("No valid moves");
         }
         foreach (int move in validMoves)
         {
@@ -104,7 +103,7 @@ public class MonteCarloTreeSearch
             }
             catch (Exception e)
             {
-                int x = 0;
+                throw new Exception("Invalid move");
             }
             parent.UntriedMoves.Remove(move);
         }
@@ -117,7 +116,7 @@ public class MonteCarloTreeSearch
             Node? child = root.SelectHighestValueChild();
             if (child == null)
             {
-                return root;
+                throw new Exception("No child nodes");
             }
             root = child;
         }
@@ -158,7 +157,7 @@ public class MonteCarloTreeSearch
             }
             catch (Exception e)
             {
-                int x = 0;
+                throw new Exception("Invalid move");
             }
         }
         return gameState;
@@ -225,7 +224,7 @@ public class MonteCarloTreeSearch
                 }
                 catch (Exception e)
                 {
-                    int x = 0;
+                    throw new Exception("Invalid move");
                 }
             }
             else

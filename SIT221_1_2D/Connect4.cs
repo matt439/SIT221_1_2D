@@ -114,7 +114,7 @@ public class Connect4
     public override string ToString()
     {
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < _rows; i++)
+        for (int i = 0; i <= _rows; i++)
         {
             string s = i.ToString();
             if (s.Length > 1)

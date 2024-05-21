@@ -9,7 +9,7 @@ public class Program
 
         Connect4MCTSDriver connect4MCTSDriver = new Connect4MCTSDriver();
         double explorationFactor = Math.Sqrt(2.0);
-        connect4MCTSDriver.PlayConnect4MCTS(true, 100, explorationFactor, 12, 12, 4);
+        connect4MCTSDriver.PlayConnect4MCTS(true, 100000, explorationFactor, 6, 7, 4);
 
         Console.ReadLine();
     }
