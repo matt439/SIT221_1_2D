@@ -1,4 +1,5 @@
 ﻿using System.CodeDom.Compiler;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace SIT221_1_2D;
@@ -32,8 +33,8 @@ public class MonteCarloTreeSearch
         public override string ToString()
         {
             string result = string.Empty;
+            result += Children;
             result += $"Optimal Move: {OptimalMove}, Optimal Move Node Index: {OptimalMoveNodeIndex}";
-            result += "\nChildren:\n" + Children;
             return result;
         }
     }
@@ -51,7 +52,7 @@ public class MonteCarloTreeSearch
             node = Selection(rootNode);
             if (node == null)
             {
-                continue;
+                throw new Exception("No node selected");
             }
 
             // Expansion
@@ -189,6 +190,7 @@ public class MonteCarloTreeSearch
         public bool IsRoot => Parent == null;
         public bool IsTerminal => GameState != Connect4.GameState.InProgress ||
             (UntriedMoves.Count < 1 && ChildNodes.Count < 1);
+        public float WinRate => Wins / (float)Visits;
 
         public double Value
         {
@@ -288,7 +290,6 @@ public class MonteCarloTreeSearch
 
         public void Update(Connect4.GameState gameState)
         {
-            //Visits++;
             if (gameState == Connect4.GameState.Draw)
             {
                 Draws++;
@@ -311,13 +312,13 @@ public class MonteCarloTreeSearch
 
         public override string ToString()
         {
-            return $"Move: {Move}, Wins: {Wins}, Loses: {Loses}, Draws: {Draws} Visits: {Visits}, WinRate: {Wins / (double)Visits} ChildNodes: {ChildNodes.Count}, Value: {Value}";
+            return $"Move: {Move}, Wins: {Wins}, Visits: {Visits}, WinRate: {WinRate}, ChildNodes: {ChildNodes.Count}, Value: {Value}";
         }
 
         public string ToStringWithChildren()
         {
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine(ToString());
+            sb.AppendLine("Root: " + ToString() + "\nRoot's children:");
             for (int i = 0; i < ChildNodes.Count; i++)
             {
                 sb.AppendLine(i.ToString() + ": " + ChildNodes[i].ToString());
