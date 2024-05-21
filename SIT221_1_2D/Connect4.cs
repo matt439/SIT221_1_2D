@@ -114,9 +114,14 @@ public class Connect4
     public override string ToString()
     {
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i <= _rows; i++)
+        for (int i = 0; i < _rows; i++)
         {
-            sb.Append(i + " ");
+            string s = i.ToString();
+            if (s.Length > 1)
+            {
+                s = s[s.Length - 1].ToString();
+            }
+            sb.Append(s + " ");
         }
         sb.AppendLine();
         for (int i = 0; i < _rows; i++)
@@ -151,30 +156,8 @@ public class Connect4
                 _board[0, column] == Player.None;
     }
 
-    //public GameState GetGameState()
-    //{
-    //    for (int i = 0; i < _rows; i++)
-    //    {
-    //        for (int j = 0; j < _columns; j++)
-    //        {
-    //            if (_board[i, j] != Player.None)
-    //            {
-    //                if (CheckWin(_board[i, j]))
-    //                {
-    //                    return _board[i, j] == Player.Player1 ? GameState.Player1Win : GameState.Player2Win;
-    //                }
-    //            }
-    //        }
-    //    }
-    //    return _remainingMoves == 0 ? GameState.Draw : GameState.InProgress;
-    //}
-
-    public GameState MakeMove(int column)//, Player player)
+    public GameState MakeMove(int column)
     {
-        //if (player == Player.None)
-        //{
-        //    throw new ArgumentException("Player must be either Player1 or Player2", "player");
-        //}
 
         if (CurrentGameState != GameState.InProgress || RemainingMoves < 1)
         {

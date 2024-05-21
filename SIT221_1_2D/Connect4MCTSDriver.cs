@@ -5,11 +5,12 @@ namespace SIT221_1_2D;
 public class Connect4MCTSDriver
 {
     public void PlayConnect4MCTS(bool goFirst = true, int iterations = 1000,
-        double explorationFactor = 1.4142)
+        double explorationFactor = 1.4142, int rows = 6, int columns = 7,
+        int winningLength = 4)
     {
-        Connect4 connect4 = new Connect4(6, 7, 4, ".", "X", "O");
+        Connect4 connect4 = new Connect4(rows, columns, winningLength, ".", "X", "O");
         MonteCarloTreeSearch mcts = new MonteCarloTreeSearch(iterations, explorationFactor);
-        //Connect4.GameState gameState = connect4.CurrentGameState;
+
         while(connect4.CurrentGameState == Connect4.GameState.InProgress)
         {
             connect4.PrintBoard();

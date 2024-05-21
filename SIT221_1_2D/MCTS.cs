@@ -55,28 +55,12 @@ public class MonteCarloTreeSearch
             }
 
             // Expansion
-            // bool simulationPlayer1Turn = node.Player1Turn;
             Node? expandedNode = Expansion(node);
             if (expandedNode == null)
             {
                 BackPropagate(node, node.Connect4.CurrentGameState);
                 continue;
             }
-
-            //try
-            //{
-            //    simulationConnect4.MakeMove(expandedNode.Move);
-            //}
-            //catch (Exception e)
-            //{
-            //    continue;
-            //}
-
-            //if (simulationConnect4.CurrentGameState != Connect4.GameState.InProgress)
-            //{
-            //    BackPropagate(expandedNode, simulationConnect4.CurrentGameState);
-            //    continue;
-            //}
 
             // Simulation
             Connect4 simulationConnect4 = new Connect4(expandedNode.Connect4);
@@ -101,7 +85,6 @@ public class MonteCarloTreeSearch
 
     private void GenerateChildren(Node parent)
     {
-        //List<int> validMoves = connect4.GetValidMoves();
         List<int> validMoves = new List<int>();
         // copy the valid moves from the parent node
         for (int i = 0; i < parent.UntriedMoves.Count; i++)
@@ -127,16 +110,6 @@ public class MonteCarloTreeSearch
         }
     }
 
-    //private Node GenerateChild(Node parent, Connect4 connect4)
-    //{
-    //    Random random = new Random();
-    //    List<int> validMoves = connect4.GetValidMoves();
-    //    int randomMoveIndex = random.Next(validMoves.Count);
-    //    int randomMove = validMoves[randomMoveIndex];
-    //    Node node = parent.AddChild(connect4, randomMove, !parent.Player1Turn);
-    //    return node;
-    //}
-
     private Node Selection(Node root)
     {
         while (!root.IsLeaf)
@@ -146,27 +119,17 @@ public class MonteCarloTreeSearch
             {
                 return root;
             }
-            //try
-            //{
-            //    connect4.MakeMove(child.Move);
-            //}
-            //catch (Exception e)
-            //{
-            //    int x = 0;
-            //}
             root = child;
         }
         return root;
     }
 
-    private Node? Expansion(Node node)//, bool player1Turn)
+    private Node? Expansion(Node node)
     {
         if (node.Visits < 1 || node.IsTerminal)
         {
             return null;
         }
-
-        //return GenerateChild(node, connect4);
 
         GenerateChildren(node);
 
@@ -186,11 +149,7 @@ public class MonteCarloTreeSearch
         while (gameState == Connect4.GameState.InProgress)
         {
             List<int> validMoves = connect4.GetValidMoves();
-            //if (validMoves.Count == 0)
-            //{
-            //    gameState = Connect4.GameState.Draw;
-            //    break;
-            //}
+
             int randomMoveIndex = _random.Next(validMoves.Count);
             int randomMove = validMoves[randomMoveIndex];
             try
@@ -231,7 +190,7 @@ public class MonteCarloTreeSearch
         public bool IsRoot => Parent == null;
         public bool IsTerminal => GameState != Connect4.GameState.InProgress ||
             (UntriedMoves.Count < 1 && ChildNodes.Count < 1);
-        //public bool IsTerminal { get; private set; }
+
         public double Value
         {
             get
@@ -286,7 +245,6 @@ public class MonteCarloTreeSearch
             Loses = 0;
             Draws = 0;
             _explorationParameter = explorationParameter;
-            //GameState = connect4.CurrentGameState;
         }
 
         public Node AddChild(Connect4 connect4, int move)
@@ -303,7 +261,7 @@ public class MonteCarloTreeSearch
             double maxUCB = double.MinValue;
             foreach (Node child in ChildNodes)
             {
-                double ucb = child.Value; //child.Ucb1Value(_explorationParameter);
+                double ucb = child.Value;
                 if (ucb > maxUCB)
                 {
                     maxUCB = ucb;
@@ -315,7 +273,6 @@ public class MonteCarloTreeSearch
 
         public int SelectMostVisitedChild()
         {
-            //Node? mostVisited = null;
             int mostVisitedIndex = -1;
 
             int maxVisits = 0;
@@ -329,13 +286,6 @@ public class MonteCarloTreeSearch
             }
             return mostVisitedIndex;
         }
-
-        //public double Ucb1Value(double explorationParameter)
-        //{
-        //    double result = Value +
-        //        explorationParameter * Math.Sqrt(Math.Log(Parent.Visits) / Visits);
-        //    return result;
-        //}
 
         public void Update(Connect4.GameState gameState)
         {
@@ -374,19 +324,6 @@ public class MonteCarloTreeSearch
                 sb.AppendLine(i.ToString() + ": " + ChildNodes[i].ToString());
             }
             return sb.ToString();
-        }
-
-        // function to find the distance from the root node
-        public int DistanceFromRoot()
-        {
-            int distance = 0;
-            Node? node = this;
-            while (node.Parent != null)
-            {
-                distance++;
-                node = node.Parent;
-            }
-            return distance;
         }
     }
 }

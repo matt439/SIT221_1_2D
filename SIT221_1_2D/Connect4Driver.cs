@@ -5,8 +5,7 @@ public class Connect4Driver
     public void PlayConnect4()
     {
         Connect4 connect4 = new Connect4(6, 7, 4, ".", "X", "O");
-        //Connect4.GameState gameState = connect4.CurrentGameState;
-        //bool player1Turn = true;
+
         while(connect4.CurrentGameState == Connect4.GameState.InProgress)
         {
             connect4.PrintBoard();
@@ -28,9 +27,6 @@ public class Connect4Driver
             } while (!int.TryParse(input, out column) || !connect4.IsValidMove(column));
 
             connect4.MakeMove(column);
-
-            //player1Turn = !player1Turn;
-
         } 
 
         connect4.PrintBoard();
