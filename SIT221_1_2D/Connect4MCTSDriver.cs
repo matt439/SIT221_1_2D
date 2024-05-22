@@ -9,7 +9,6 @@ public class Connect4MCTSDriver
         int winningLength = 4)
     {
         Connect4 connect4 = new Connect4(rows, columns, winningLength, ".", "X", "O");
-        //MonteCarloTreeSearch mcts = new MonteCarloTreeSearch(iterations, explorationFactor);
 
         while(connect4.CurrentGameState == Connect4.GameState.InProgress)
         {
@@ -67,7 +66,7 @@ public class Connect4MCTSDriver
 
     private int GetPlayerMove(Connect4 connect4)
     {
-        string input;
+        string? input;
         int column;
         do
         {
