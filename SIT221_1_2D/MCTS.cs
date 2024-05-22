@@ -46,10 +46,8 @@ public class MonteCarloTreeSearch
 
         for (int i = 0; i < _maxIterations; i++)
         {
-            Node node = rootNode;
-
             // Selection
-            node = Selection(rootNode);
+            Node node = Selection(rootNode);
             if (node == null)
             {
                 throw new Exception("No node selected");
@@ -57,6 +55,7 @@ public class MonteCarloTreeSearch
 
             // Expansion
             Node? expandedNode = Expansion(node);
+            // if the node is null, it has no visits or is terminal
             if (expandedNode == null)
             {
                 BackPropagate(node, node.Connect4.CurrentGameState);
@@ -82,32 +81,6 @@ public class MonteCarloTreeSearch
         result.OptimalMove = rootNode.ChildNodes[optimalMoveIndex].Move;
         result.Children = rootNode.ToStringWithChildren();
         return result;
-    }
-
-    private void GenerateChildren(Node parent)
-    {
-        List<int> validMoves = new List<int>();
-        for (int i = 0; i < parent.UntriedMoves.Count; i++)
-        {
-            validMoves.Add(parent.UntriedMoves[i]);
-        }
-        if (validMoves.Count < 1)
-        {
-            throw new Exception("No valid moves");
-        }
-        foreach (int move in validMoves)
-        {
-            Node childNode = new Node(parent.Connect4, parent, move, _explorationParameter);
-            try
-            {
-                parent.ChildNodes.Add(childNode);
-            }
-            catch (Exception e)
-            {
-                throw new Exception("Invalid move");
-            }
-            parent.UntriedMoves.Remove(move);
-        }
     }
 
     private Node Selection(Node root)
@@ -173,12 +146,38 @@ public class MonteCarloTreeSearch
         }
     }
 
+    private void GenerateChildren(Node parent)
+    {
+        List<int> validMoves = new List<int>();
+        for (int i = 0; i < parent.UntriedMoves.Count; i++)
+        {
+            validMoves.Add(parent.UntriedMoves[i]);
+        }
+        if (validMoves.Count < 1)
+        {
+            throw new Exception("No valid moves");
+        }
+        foreach (int move in validMoves)
+        {
+            Node childNode = new Node(parent.Connect4, parent, move, _explorationParameter);
+            try
+            {
+                parent.ChildNodes.Add(childNode);
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Invalid move");
+            }
+            parent.UntriedMoves.Remove(move);
+        }
+    }
+
     private class Node
     {
         public Node Parent { get; }
         public int Move { get; }
         public Connect4 Connect4 { get; }
-        public Connect4.Player PlayerTurn => Connect4.CurrentPlayerTurn;
+        public Connect4.Player PlayerTurn => Connect4.CurrentPlayer;
         public Connect4.GameState GameState => this.Connect4.CurrentGameState;
         public List<int> UntriedMoves { get; }
         public List<Node> ChildNodes { get; }
@@ -188,8 +187,7 @@ public class MonteCarloTreeSearch
         public int Visits => Wins + Loses + Draws;
         public bool IsLeaf => ChildNodes.Count < 1;
         public bool IsRoot => Parent == null;
-        public bool IsTerminal => GameState != Connect4.GameState.InProgress ||
-            (UntriedMoves.Count < 1 && ChildNodes.Count < 1);
+        public bool IsTerminal => UntriedMoves.Count < 1 && ChildNodes.Count < 1;
         public float WinRate => Wins / (float)Visits;
 
         public double Value
@@ -216,7 +214,6 @@ public class MonteCarloTreeSearch
         {
             Parent = parent;
             Move = move;
-            
             if (!IsRoot)
             {
                 Connect4 = new Connect4(connect4);
@@ -231,9 +228,15 @@ public class MonteCarloTreeSearch
             }
             else
             {
-                Connect4 = new Connect4(connect4, true);
+                Connect4 = new Connect4(connect4);
             }
-            if (Connect4.CurrentGameState != Connect4.GameState.InProgress)
+            bool player1Win = Connect4.CurrentGameState == Connect4.GameState.Player1Win &&
+                Connect4.CurrentPlayer == Connect4.Player.Player1;
+            bool player2Win = Connect4.CurrentGameState == Connect4.GameState.Player2Win &&
+                Connect4.CurrentPlayer == Connect4.Player.Player2;
+            bool draw = Connect4.CurrentGameState == Connect4.GameState.Draw;
+
+            if (player1Win || player2Win || draw)
             {
                 UntriedMoves = new List<int>();
             }

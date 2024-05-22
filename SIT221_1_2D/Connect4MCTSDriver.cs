@@ -9,12 +9,14 @@ public class Connect4MCTSDriver
         int winningLength = 4)
     {
         Connect4 connect4 = new Connect4(rows, columns, winningLength, ".", "X", "O");
-        MonteCarloTreeSearch mcts = new MonteCarloTreeSearch(iterations, explorationFactor);
+        //MonteCarloTreeSearch mcts = new MonteCarloTreeSearch(iterations, explorationFactor);
 
         while(connect4.CurrentGameState == Connect4.GameState.InProgress)
         {
+            MonteCarloTreeSearch mcts = new MonteCarloTreeSearch(iterations, explorationFactor);
             connect4.PrintBoard();
-            if (connect4.CurrentPlayerTurn == Connect4.Player.Player1)
+            if (connect4.CurrentPlayer == Connect4.Player.Player2 ||
+                connect4.CurrentPlayer == Connect4.Player.None)
             {
                 Console.WriteLine("Player 1's turn");
                 if (goFirst)
@@ -45,7 +47,6 @@ public class Connect4MCTSDriver
                     connect4.MakeMove(column);
                 }
             }
-
         }
 
         connect4.PrintBoard();

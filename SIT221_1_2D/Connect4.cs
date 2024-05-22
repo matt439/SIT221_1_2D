@@ -28,9 +28,7 @@ public class Connect4
     private readonly string _player2;
 
     public int RemainingMoves { get; private set; }
-    private readonly int _totalMoves;
-    private bool _player1Turn = true;
-    public Player CurrentPlayerTurn => _player1Turn ? Player.Player1 : Player.Player2;
+    public Player CurrentPlayer { get; private set; } = Player.None;
     public GameState CurrentGameState { get; private set; } = GameState.InProgress;
 
     private readonly Player[,] _board;
@@ -56,11 +54,10 @@ public class Connect4
         _player2 = player2;
 
         RemainingMoves = _rows * _columns;
-        _totalMoves = RemainingMoves;
         _board = new Player[_rows, _columns];
     }
 
-    public Connect4(Connect4 connect4, bool swapPlayerTurns = false)
+    public Connect4(Connect4 connect4)
     {
         _rows = connect4._rows;
         _columns = connect4._columns;
@@ -71,14 +68,7 @@ public class Connect4
         _player2 = connect4._player2;
 
         RemainingMoves = connect4.RemainingMoves;
-        if (swapPlayerTurns)
-        {
-            _player1Turn = !connect4._player1Turn;
-        }
-        else
-        {
-            _player1Turn = connect4._player1Turn;
-        }
+        CurrentPlayer = connect4.CurrentPlayer;
         CurrentGameState = connect4.CurrentGameState;
 
         _board = new Player[_rows, _columns];
@@ -156,6 +146,18 @@ public class Connect4
                 _board[0, column] == Player.None;
     }
 
+    private void ChangePlayer()
+    {
+        if (CurrentPlayer == Player.None)
+        {
+            CurrentPlayer = Player.Player1;
+        }
+        else
+        {
+            CurrentPlayer = CurrentPlayer == Player.Player1 ? Player.Player2 : Player.Player1;
+        }
+    }
+
     public GameState MakeMove(int column)
     {
 
@@ -168,20 +170,22 @@ public class Connect4
             throw new ArgumentException("Invalid move", nameof(column));
         }
 
+        ChangePlayer();
+        RemainingMoves--;
+
         for (int i = _rows - 1; i >= 0; i--)
         {
             if (_board[i, column] == Player.None)
             {
-                _board[i, column] = CurrentPlayerTurn;
+                _board[i, column] = CurrentPlayer;
                 break;
             }
         }
 
-        RemainingMoves--;
-
-        if (CheckWin(CurrentPlayerTurn))
+        if (CheckWin(CurrentPlayer))
         {
-            CurrentGameState = _player1Turn ? GameState.Player1Win : GameState.Player2Win;
+            CurrentGameState = CurrentPlayer == Player.Player1 ?
+                GameState.Player1Win : GameState.Player2Win;
         }
         else if (RemainingMoves < 1)
         {
@@ -190,7 +194,6 @@ public class Connect4
         else
         {
             CurrentGameState = GameState.InProgress;
-            _player1Turn = !_player1Turn;
         }
 
         return CurrentGameState;
@@ -241,37 +244,5 @@ public class Connect4
             count++;
         }
         return count >= _winningLength;
-    }
-
-    private bool IsValidUndoMove(int column)
-    {
-        return column >= 0 &&
-            column < _columns &&
-                _board[_rows - 1, column] != Player.None;
-    }
-
-    public void UndoMove(int column)
-    {
-        if (RemainingMoves >= _totalMoves)
-        {
-            throw new InvalidOperationException("No moves to undo");
-        }
-        if (!IsValidUndoMove(column))
-        {
-            throw new ArgumentException("Invalid undo move", nameof(column));
-        }
-
-        for (int i = 0; i < _rows; i++)
-        {
-            if (_board[i, column] != Player.None)
-            {
-                _board[i, column] = Player.None;
-                break;
-            }
-        }
-
-        RemainingMoves++;
-        CurrentGameState = GameState.InProgress;
-        _player1Turn = !_player1Turn;
     }
 }

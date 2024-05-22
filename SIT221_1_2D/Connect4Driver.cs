@@ -9,7 +9,7 @@ public class Connect4Driver
         while(connect4.CurrentGameState == Connect4.GameState.InProgress)
         {
             connect4.PrintBoard();
-            if (connect4.CurrentPlayerTurn == Connect4.Player.Player1)
+            if (connect4.CurrentPlayer == Connect4.Player.Player1)
             {
                 Console.WriteLine("Player 1's turn");
             }
